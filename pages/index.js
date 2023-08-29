@@ -1,7 +1,20 @@
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import Link from "next/link";
+import Image from "next/image";
+import { getSortedPostsData } from "../lib/posts";
+import utilStyles from "../styles/utils.module.css";
 
-export default function Home() {
+export async function getStaticProps() {
+  const allPostsData = getSortedPostsData();
+  return {
+    props: {
+      allPostsData,
+    },
+  };
+}
+
+export default function Home({ allPostsData }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -10,9 +23,25 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        {/* <h1 className={styles.title}>
+          Learn <a href="https://nextjs.org">Next.js!</a>
+        </h1> */}
+        <h1 className="title">
+          Read <Link href="/posts/first-post">this page!</Link>
         </h1>
+
+        <img
+          alt="my-image"
+          src="/images/star.jpg"
+          style={{ width: 144, height: 144 }}
+        />
+        <br />
+        <Image
+          src="/images/star.jpg" // Route of the image file
+          height={144} // Desired size with correct aspect ratio
+          width={144} // Desired size with correct aspect ratio
+          alt="Your Name"
+        />
 
         <p className={styles.description}>
           Get started by editing <code>pages/index.js</code>
@@ -46,6 +75,20 @@ export default function Home() {
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
           </a>
+          <section
+            className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}
+          >
+            <h2 className={utilStyles.headingLg}>Blog</h2>
+            <ul className={utilStyles.list}>
+              {allPostsData.map(({ id, date, title }) => (
+                <li className={utilStyles.listItem} key={id}>
+                  <Link href={`/posts/${id}`}>{title}</Link>
+                  <br />
+                  {date}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </main>
 
@@ -55,7 +98,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
         </a>
       </footer>
@@ -111,5 +154,5 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
 }
